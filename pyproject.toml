@@ -1,0 +1,19 @@
+[project]
+name = "lattivo-be-py"
+version = "0.1.0"
+description = "A minimal backend API for Lattivo, built with Python, FastAPI, and SQLite. This is an MVP prototype to practice Python, database modeling, and CRUD workflows before building the full backend with C#."
+authors = [
+    { name = "kirbylockard", email = "kirbylockard@gmail.com" }
+]
+license = { text = "MIT License" }
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+
+dependencies = [
+    "fastapi>=0.115.0,<0.116.0",
+    "uvicorn[standard]>=0.30.0,<0.31.0"
+]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

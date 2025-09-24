@@ -1,4 +1,5 @@
-# ruff: noqa: I001
+# pylint: skip-file
+# # ruff: noqa: I001
 # tell ruff to ignore the unused import error for this file
 from alembic import context
 from sqlalchemy import engine_from_config, pool

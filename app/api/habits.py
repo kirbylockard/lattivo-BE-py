@@ -1,15 +1,46 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
+from fastapi import APIRouter
+from pydantic import BaseModel
+from typing import List
 
-from app.core.database import get_session
-from app.models.habit import Habit
+router = APIRouter()
 
-router = APIRouter(prefix="/habits", tags=["Habits"])
+# In-memory store (or later, DB)
+class HabitStore:
+    def __init__(self):
+        self.habits = []
+        self.counter = 1
+
+    def reset(self):
+        self.habits.clear()
+        self.counter = 1
+
+    def list(self):
+        return self.habits
+
+    def create(self, name: str, description: str):
+        habit = {"id": self.counter, "name": name, "description": description}
+        self.habits.append(habit)
+        self.counter += 1
+        return habit
 
 
-@router.get("/")
-async def list_habits(db: AsyncSession = Depends(get_session)):
-    result = await db.execute(select(Habit))
-    habits = result.scalars().all()
-    return habits
+store = HabitStore()
+
+# Pydantic models
+class Habit(BaseModel):
+    id: int
+    name: str
+    description: str
+
+class HabitCreate(BaseModel):
+    name: str
+    description: str
+
+# Routes
+@router.get("/", response_model=List[Habit])
+async def list_habits():
+    return store.list()
+
+@router.post("/", response_model=Habit, status_code=201)
+async def create_habit(habit: HabitCreate):
+    return store.create(habit.name, habit.description)

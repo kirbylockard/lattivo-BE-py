@@ -1,7 +1,7 @@
 [project]
 name = "lattivo-be-py"
 version = "0.1.0"
-description = "A minimal backend API for Lattivo, built with Python, FastAPI, and SQLite. This is an MVP prototype to practice Python, database modeling, and CRUD workflows before building the full backend with C#."
+description = "A minimal backend API for Lattivo, built with Python, FastAPI, and PostgreSQL. This is an MVP prototype to practice Python, database modeling, and CRUD workflows."
 authors = [
     { name = "kirbylockard", email = "kirbylockard@gmail.com" }
 ]
@@ -12,12 +12,12 @@ requires-python = ">=3.11,<3.13"
 dependencies = [
     "fastapi>=0.115.0,<0.116.0",
     "uvicorn[standard]>=0.30.0,<0.31.0",
-    "sqlalchemy (>=2.0.43,<3.0.0)",
-    "psycopg2-binary (>=2.9.10,<3.0.0)",
-    "alembic (>=1.16.5,<2.0.0)",
-    "asyncpg (>=0.30.0,<0.31.0)",
-    "pydantic (>=2.11.9,<3.0.0)",
-    "python-dotenv (>=1.1.1,<2.0.0)"
+    "sqlalchemy>=2.0.43,<3.0.0",
+    "psycopg2-binary>=2.9.10,<3.0.0",
+    "alembic>=1.16.5,<2.0.0",
+    "asyncpg>=0.30.0,<0.31.0",
+    "pydantic>=2.11.9,<3.0.0",
+    "python-dotenv>=1.1.1,<2.0.0"
 ]
 
 [build-system]
@@ -26,11 +26,12 @@ build-backend = "poetry.core.masonry.api"
 
 [dependency-groups]
 dev = [
-    "black (>=25.9.0,<26.0.0)",
-    "ruff (>=0.13.1,<0.14.0)",
-    "pytest (>=8.4.2,<9.0.0)",
-    "pytest-asyncio (>=1.2.0,<2.0.0)",
-    "httpx (>=0.28.1,<0.29.0)"
+    "black>=25.9.0,<26.0.0",
+    "ruff>=0.13.1,<0.14.0",
+    "pytest>=8.4.2,<9.0.0",
+    "httpx>=0.28.1,<0.29.0",
+    "factory_boy>=3.2.2,<4.0.0",
+    "faker>=23.3.0,<24.0.0"
 ]
 
 [tool.black]
@@ -38,3 +39,10 @@ line-length = 88
 
 [tool.ruff.lint]
 select = ["E", "F", "I"]
+
+[tool.poetry]
+name = "lattivo-be-py"
+version = "0.1.0"
+packages = [
+    { include = "app" }
+]

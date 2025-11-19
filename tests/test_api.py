@@ -3,7 +3,7 @@ from httpx import AsyncClient, ASGITransport
 from app.main import app
 
 # Reset in-memory DB between tests
-from app.api.habits import store
+from api.schemas.habits import store
 
 
 # Reset in-memory DB before each test

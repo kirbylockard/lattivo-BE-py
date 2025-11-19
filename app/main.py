@@ -1,10 +1,12 @@
+# app/main.py
 from fastapi import FastAPI
-from app.api import habits  # import the router
 
-app = FastAPI()
+from app.api import habits
 
-# Include the habits routes
+app = FastAPI(title="Lattivo API")
+
 app.include_router(habits.router, prefix="/habits", tags=["habits"])
+
 
 @app.get("/")
 async def root():

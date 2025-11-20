@@ -1,7 +1,7 @@
 # app/schemas/habits.py
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 from typing import List, Literal, Optional, Union
 from uuid import UUID
 
@@ -30,7 +30,8 @@ class HabitUnit(BaseModel):
     isCustom: bool
     customLabel: Optional[str] = None
     allowsDecimal: Optional[bool] = None
-    category: Optional[str] = None  # you can make this a Literal of categories later
+    # Keep as string; you can switch to Literal[...] later if you want
+    category: Optional[str] = None
 
 
 class SpecificDaysSchedule(BaseModel):
@@ -88,24 +89,30 @@ HabitSchedule = Union[
 
 class HabitBase(BaseModel):
     """
-    Shared fields for create/read (no id/creationDate here).
-    Internal names are snake_case; JSON uses camelCase via aliases.
+    Shared fields for create/read (no id/created_at here).
+
+    - Internal model field names are snake_case (user_id, target_value, ...).
+    - JSON uses camelCase thanks to aliases (userId, targetValue, ...).
     """
 
     model_config = ConfigDict(populate_by_name=True)
 
     user_id: UUID = Field(..., alias="userId")
     name: str
+
     unit: HabitUnit
     target_value: float = Field(..., alias="targetValue")
     schedule: HabitSchedule
+
     notes: Optional[str] = None
     color: Optional[str] = None
 
     is_active: bool = Field(default=True, alias="isActive")
     is_archived: bool = Field(default=False, alias="isArchived")
 
-    end_date: Optional[datetime] = Field(default=None, alias="endDate")
+    # Supabase stores end_date as DATE; we represent it as date here.
+    end_date: Optional[date] = Field(default=None, alias="endDate")
+
     tags: Optional[List[str]] = None
 
 
@@ -113,10 +120,13 @@ class HabitCreate(HabitBase):
     """
     Input for creating a habit.
 
-    Same fields as HabitBase. The DB will generate:
+    DB will generate:
       - id
-      - creation_date
+      - created_at
+      - updated_at
     """
+
+    # no extra fields; HabitBase is enough
     pass
 
 
@@ -126,14 +136,17 @@ class HabitRead(HabitBase):
 
     Includes:
       - id
-      - creationDate (aliased from creation_date)
+      - created_at -> JSON: creationDate
+      - updated_at -> JSON: updatedAt
     """
 
     id: UUID
-    creation_date: datetime = Field(..., alias="creationDate")
+
+    created_at: datetime = Field(..., alias="creationDate")
+    updated_at: datetime = Field(..., alias="updatedAt")
 
     model_config = ConfigDict(
-        from_attributes=True,  # allow .from_orm()
+        from_attributes=True,  # allows `HabitRead.model_validate(orm_obj, from_attributes=True)`
         populate_by_name=True,
     )
 
@@ -156,7 +169,8 @@ class HabitUpdate(BaseModel):
     target_value: Optional[float] = Field(default=None, alias="targetValue")
     is_active: Optional[bool] = Field(default=None, alias="isActive")
     is_archived: Optional[bool] = Field(default=None, alias="isArchived")
-    end_date: Optional[datetime] = Field(default=None, alias="endDate")
+
+    end_date: Optional[date] = Field(default=None, alias="endDate")
     tags: Optional[List[str]] = None
 
 
